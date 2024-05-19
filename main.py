@@ -1,4 +1,5 @@
 from hashlib import sha256
+from math import ceil
 
 espaces = '-'*100
 
@@ -8,16 +9,54 @@ class TabelaHash:
             self.chave = chave
             self.valor = valor
 
+        def __str__(self):
+            return f'{self.chave}: {self.valor}'
+        
+        def __repr__(self):
+            return self.__str__()
+
+
 
     def __init__(self):
         self.__capacidade_atual = 5 # capacidade/tamanho interno
         self.__tabela_interna = [[] for _ in range(self.__capacidade_atual)]
         self.__tamanho = 0 # quantidade de elementos salvos na tabela hash
 
+        self.__limiar_expandir = 0.75
+        self.__fator_expansao = 2
+        self.__limiar_reduzir = 0.20
+        self.__fator_reducao = 0.5
+    
+    
+
+    def __str__(self):
+        retorno = '{'
+        total = len(self)
+        i = 0
+        for k, v in self:
+            retorno += f'{k}:'
+
+            if isinstance(v, str):
+                retorno += f"'{v}'"
+            else:
+                retorno += f'{v}'
+
+            if i < total - 1:
+                retorno += ', '
+            i += 1
+        retorno += '}'
+
+        return retorno
+    
+    def __repr__(self):
+        return self.__str__()
 
     def __len__(self):
         return self.__tamanho
 
+    @property
+    def __fator_carga(self):
+        return self.__tamanho / self.__capacidade_atual
 
     @staticmethod
     def __verificar_chave(chave):
@@ -36,6 +75,10 @@ class TabelaHash:
 
     def __setitem__(self, chave, valor):
         self.__verificar_chave(chave)
+
+        if self.__fator_carga >= self.__limiar_expandir:
+            self.__atualizar_tabela(self.__capacidade_atual * self.__fator_expansao)
+
         indice = self.__descobrir_indice(chave)
 
         # Verifica se a chave ja existe na tabela
@@ -67,6 +110,9 @@ class TabelaHash:
     def __delitem__(self, chave):
         self.__verificar_chave(chave)
 
+        if self.__fator_carga <= self.__limiar_reduzir:
+            self.__atualizar_tabela(ceil(self.__capacidade_atual * self.__fator_reducao))
+
         indice = self.__descobrir_indice(chave)
 
 
@@ -78,6 +124,17 @@ class TabelaHash:
 
         raise KeyError(f'Chave {chave} nao encontrada')
 
+    def __atualizar_tabela(self, nova_capacidade):
+        tabela_antiga = self.__tabela_interna
+
+
+        self.__tabela_interna = [[] for _ in range(nova_capacidade)]
+        self.__capacidade_atual = nova_capacidade
+        self.__tamanho = 0
+
+        for lista in tabela_antiga:
+            for elemento in lista:
+                self[elemento.chave] = elemento.valor
 
 
 
@@ -90,16 +147,29 @@ pessoa['sexo'] = 'Masculino'
 pessoa['profissao'] = 'progamador'
 pessoa['nacionalidade'] = 'Brasileira'
 pessoa['cpf'] = 128123123442
+pessoa['salario'] = 30000
+pessoa['estado_civil'] = 'solteiro'
+pessoa['telefone'] = '(27) 99267-1511'
+pessoa['cep'] = 29129721
+#pessoa['nome1'] = 'giovanna'
+#pessoa['idade1'] = 22
+#pessoa['sexo1'] = 'Feminino'
+#pessoa['profissao1'] = 'Farmaceutica'
+#pessoa['nacionalidade1'] = 'Brasileira'
+#pessoa['cpf1'] = 12812312342
+#pessoa['salario1'] = 3000
+#pessoa['estado_civil1'] = 'solteira'
+#pessoa['telefone1'] = '(27) 99267-1027'
+#pessoa['cep1'] = 29129799
 
+#print(f'\n{espaces}\n')
 
-print(f'\n{espaces}\n')
-
-print(f'Nome: {pessoa["nome"]}')
-print(f'idade: {pessoa["idade"]}')
-print(f'sexo: {pessoa["sexo"]}')
-print(f'profissao: {pessoa["profissao"]}')
-print(f'nacionalidade: {pessoa["nacionalidade"]}')
-print(f'cpf: {pessoa["cpf"]}')
+#print(f'Nome: {pessoa["nome"]}')
+#print(f'idade: {pessoa["idade"]}')
+#print(f'sexo: {pessoa["sexo"]}')
+#print(f'profissao: {pessoa["profissao"]}')
+#print(f'nacionalidade: {pessoa["nacionalidade"]}')
+#print(f'cpf: {pessoa["cpf"]}')
 
 print(f'\n{espaces}')
 
@@ -107,8 +177,10 @@ print(f'quantidade de elementos: {len(pessoa)}')
 
 
 print(f'{espaces}/n')
-del pessoa['cpf']
+#del pessoa['cpf']
 for k, v in pessoa:
     print(f'{k}: {v}')
-
+#
 print(f'\n{espaces}')
+
+print(pessoa)
