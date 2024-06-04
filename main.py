@@ -58,9 +58,8 @@ class TabelaHash:
     def __fator_carga(self):
         return self.__tamanho / self.__capacidade_atual
 
-    @staticmethod
-    def __verificar_chave(chave):
-        hash(chave)
+    def __verificar_chave(self, chave):
+        self.__hash_deterministico(chave)
 
 
     @staticmethod
@@ -81,12 +80,12 @@ class TabelaHash:
 
         indice = self.__descobrir_indice(chave)
 
-        # Verifica se a chave ja existe na tabela
-        for elemeto in self.__tabela_interna[indice]:
-            if elemeto.chave == chave:
-                elemeto.valor = valor # se encontrar atualiza o valor
-                return
-            
+        ## Verifica se a chave ja existe na tabela
+        #for elemeto in self.__tabela_interna[indice]:
+        #    if elemeto.chave == chave:
+        #        elemeto.valor = valor # se encontrar atualiza o valor
+        #        return
+        #    
         # se nao encontrar, adiciona um novo elemento
         novo_elemento = self.__Elemento(chave, valor)
         self.__tabela_interna[indice].append(novo_elemento)
@@ -142,6 +141,7 @@ class TabelaHash:
 
 pessoa = TabelaHash()
 pessoa['nome'] = 'Bernardo'
+pessoa['nome'] = 'Giovanna'
 pessoa['idade'] = 21
 pessoa['sexo'] = 'Masculino'
 pessoa['profissao'] = 'progamador'
@@ -151,25 +151,6 @@ pessoa['salario'] = 30000
 pessoa['estado_civil'] = 'solteiro'
 pessoa['telefone'] = '(27) 99267-1511'
 pessoa['cep'] = 29129721
-#pessoa['nome1'] = 'giovanna'
-#pessoa['idade1'] = 22
-#pessoa['sexo1'] = 'Feminino'
-#pessoa['profissao1'] = 'Farmaceutica'
-#pessoa['nacionalidade1'] = 'Brasileira'
-#pessoa['cpf1'] = 12812312342
-#pessoa['salario1'] = 3000
-#pessoa['estado_civil1'] = 'solteira'
-#pessoa['telefone1'] = '(27) 99267-1027'
-#pessoa['cep1'] = 29129799
-
-#print(f'\n{espaces}\n')
-
-#print(f'Nome: {pessoa["nome"]}')
-#print(f'idade: {pessoa["idade"]}')
-#print(f'sexo: {pessoa["sexo"]}')
-#print(f'profissao: {pessoa["profissao"]}')
-#print(f'nacionalidade: {pessoa["nacionalidade"]}')
-#print(f'cpf: {pessoa["cpf"]}')
 
 print(f'\n{espaces}')
 
@@ -177,7 +158,9 @@ print(f'quantidade de elementos: {len(pessoa)}')
 
 
 print(f'{espaces}/n')
-#del pessoa['cpf']
+
+del pessoa['nome']
+
 for k, v in pessoa:
     print(f'{k}: {v}')
 #
